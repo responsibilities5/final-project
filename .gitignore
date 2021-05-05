@@ -3,7 +3,7 @@ terraform.tfvars
 terraform.tfstate
 terraform.tfstate.backup
 .terraform.lock.hcl
-rought.txt
+rough.txt
 node_modules
 package-lock.json
 .env
