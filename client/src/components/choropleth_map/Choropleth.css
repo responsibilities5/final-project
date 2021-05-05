@@ -1,0 +1,19 @@
+#county-border {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+  stroke: rgb(0, 0, 0);
+  stroke-width: 0.8px;
+  stroke-opacity: 0.5;
+}
+
+#state-border {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+  stroke: rgb(0, 0, 0);
+  stroke-width: 1.5px;
+  stroke-opacity: 1;
+}

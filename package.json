@@ -1,0 +1,30 @@
+{
+  "name": "final-project",
+  "version": "1.0.0",
+  "description": "react front app served by node backend server in a CI/CD pipeline using Jenkins and infrastructure provisioning with Terraform",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "npm start --prefix client",
+    "server": "nodemon server.js",
+    "client:build": "cd client && npm run build",
+    "dev": "concurrently --kill-others-on-fail \"npm run client\" \"npm run server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/responsibilities5/final-project.git"
+  },
+  "author": "Shiva Teja Sirimalla",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/responsibilities5/final-project/issues"
+  },
+  "homepage": "https://github.com/responsibilities5/final-project#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "concurrently": "^6.0.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7"
+  }
+}

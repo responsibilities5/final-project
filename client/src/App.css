@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "PT Sans", sans-serif;
+}
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+li {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  min-height: 10vh;
+  align-items: center;
+  font-family: "Courier New", Courier, monospace;
+  background-color: black;
+  color: white;
+}
+
+nav .logo {
+  font-size: 22px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+nav .nav-links {
+  display: flex;
+  justify-content: space-around;
+  width: 32%;
+}
+
+nav .nav-links a {
+  font-size: 18px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+nav .nav-links a:hover {
+  border-bottom: 1px solid #fff;
+}
+
+nav .burger-icon {
+  font-size: 28px;
+  display: none;
+  cursor: pointer;
+}
+
+@media all and (max-width: 768px) {
+  nav .burger-icon {
+    display: block;
+  }
+
+  nav .nav-links {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: black;
+    padding: 20px;
+    width: 50%;
+    transform: translateX(-500px);
+    transition: 0.5s ease-in-out;
+  }
+
+  nav .nav-links li {
+    padding: 25px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  nav .nav-links li:last-of-type {
+    border-bottom: 0px solid #ccc;
+  }
+
+  nav .nav-links a:hover {
+    border-bottom: 0px solid #fff;
+  }
+} */
