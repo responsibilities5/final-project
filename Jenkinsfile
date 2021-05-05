@@ -6,7 +6,7 @@ pipeline {
         AWS_ACCESS_KEY = credentials('AWS_ACCESS_KEY')
         AWS_SECRET_KEY = credentials('AWS_SECRET_KEY')
         def IP = ''
-        //ECR_PATH = credentials('ECR_PATH')
+        def ECR = "308682804621.dkr.ecr.us-east-1.amazonaws.com"
     }
 
     tools {
@@ -52,7 +52,7 @@ pipeline {
 				        IP = ip[0..s-1]
 			        }
 			        else {IP = ip}
-                    	sh "echo ${IP[0..-2]} >> abc.txt"
+                    	sh "echo ${IP[0..-2]} >> ipaddresslist.txt"
                     
                 }
             }
