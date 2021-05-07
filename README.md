@@ -1,4 +1,4 @@
-### CI/CD PIPELINE TO DEPLOY A REACT APP
+# CI/CD PIPELINE TO DEPLOY A REACT APP
 
 ## BRIEF WORKFLOW
 
@@ -376,9 +376,81 @@ This command refreshes the state, examines the status of all the resources and d
 
 ## DOCKER DESKTOP
 
-### DOCKER DESKTOP INSTALLATION
+Docker is a platform as a service (PaaS) product that is used to create an isolated environment for a software application along with all the necessary dependencies of the application. It provides Operating System level virtualization. The major difference between a Virtual Machine and Docker container is that the former is a heavy weighted software product as VM implements the Application layer, OS layer and a Kernel of its own, separate from the Kernel of the host machine. VM runs on top of the application layer of the host machine, on the other hand, a docker container implements the application layer, the OS layer and uses the host machine's kernel to fork new jobs.
 
-Follow the instructions from the official docker documentation to download and install docker.
-https://docs.docker.com/get-docker/
+Subsequently it is a very light-weight virtualization tool as it is flexible and very capable of using some of the shared libraries of the host machine.
+
+For this project docker is used to create a docker image with a Dockerfile. A docker image is a blueprint that is used to construct the docker container in which the react application and the node express server serving the application run inside of this container.
+
+### DOCKER DESKTOP INSTALLATION AND CONFIGURATION
+
+Follow the instructions from the official docker documentation to download and install docker. https://docs.docker.com/get-docker/
+
+Note: To go further aws credentials have to be configured using aws configure command, ignore this note if already configured.
+
+After the installation run docker desktop application. After docker is up and running, open terminal and run the following command
+
+```shell
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_URI}  #substitute the last part of this command as the interpolated value has to be the URI of the ECR repository created earlier without the /projectname, it has to start with numbers and end with .com
+```
+
+If that command returns the output Login succeeded then everything is going well so far.
 
 ### DOCKERFILE
+
+A Dockerfile is used to build a docker image. Create a new file named Dockerfile in the root folder of the project.
+
+A Dockerfile lays a plan for creating the docker image.
+
+It starts with a FROM instruction which defines the base image that is to be used and the next instructions are stacked on top this base image. As Node is the major dependency for thsi project node is the base image here.
+
+The following instruction WORKDIR sets the working directory for the container.
+
+The COPY instruction has two parameters passed to it, the first is the directory of the host machine and the second being the directory inside of the virtual container. This instruction copies all the files inside the first parameter directory and saves them in the second parameter directory.
+
+The RUN instruction executes shell scripts inside of the container after its contruction from the docker image.
+
+The ENV instruction is used to set some environment variables inside of the container.
+
+The EXPOSE instruction opens a specified conatiner port and exposes it to the host machine.
+
+The CMD instruction is an entry point into the container. It is very similar to RUN, except that a Dockerfile can only have one CMD instruction whereas there can be more than one RUN instructions. This instruction is usually used to start the application inside of the container.
+
+### DOCKER COMMANDS
+
+```shell
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_URI}  #substitute the last part of this command as the interpolated value has to be the URI of the ECR repository created earlier without the /projectname, it has to start with numbers and end with .com
+```
+
+This command only works if the aws credentials are configured with the awscli command aws configure. So basically the above command uses the configured aws credentials and fetches ECR access token which is then given as input to the second command which authenticates the local docker client so that it can push and pull docker images to and from ECR. Therefore, this command returns as Login Succeeded at the end.
+
+```shell
+docker build -t ${ECR_URI}/project_name:app-V1 .
+```
+
+This command builds the docker image using the Dockerfile. The "." at the end represents the location of the Dockerfile. As in this case this command is executed from the root directory of the project where Dockerfile resides, a "." is provided. The -t option specifies the tag for the docker image, the convention for a docker image tag usually is as follows "docker_repository_path:image_version"
+
+```shell
+docker push image_tag
+```
+
+This command pushes the docker image with the specified tag to its remote repository that is mentioned as a part of its image_tag. The docker client cannot perform this if it is not authenticated with image repository.
+
+The following are docker cleanup commands
+
+```shell
+docker stop $(docker ps -aq) #this command stops all the running commands in the system
+docker system prune -af      #this command completely deletes all the stopped containers and images
+```
+
+```shell
+docker pull image_tag
+```
+
+This command pulls the specified docker image from a remote repository to the local machine
+
+```shell
+docker run -d -p 80:5000 --name container_name image_tag
+```
+
+This command constructs the docker container with all the contents inside of the docker image. The options -d suggests docker to execute this command in a detached mode in the background, -p creates a port forwarding connection between the host machine and the docker container. Any requests sent to port 80 of the host machine will be forwarded to the port 5000 of the container, --name is used to give a name to the newly created container.

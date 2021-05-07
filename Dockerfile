@@ -10,6 +10,8 @@ FROM node:14.16 AS server-build
 
 WORKDIR /root/
 
+ENV NODE_ENV="production"
+
 COPY --from=ui-build /home/app/client/build ./client/build
 
 COPY package*.json .
