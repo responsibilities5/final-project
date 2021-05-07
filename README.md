@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### CI/CD PIPELINE TO DEPLOY A REACT APP
 
 ## BRIEF WORKFLOW
@@ -382,3 +383,8 @@ Follow the instructions from the official docker documentation to download and i
 https://docs.docker.com/get-docker/
 
 ### DOCKERFILE
+=======
+### CI/CD PIPELINE TO DEPLOY A REACT APP 
+
+# \* INSTALLING JENKINS
+>>>>>>> 68a58c73690669342fa8e0efe673b1d1ce63e92c
