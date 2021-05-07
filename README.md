@@ -249,8 +249,6 @@ Under script path type "Jenkinsfile", this tells Jenkins that the name of the pi
 
 Click save.
 
-### JENKINSFILE
-
 ## SOCKETXP
 
 For security purposes Jenkins is normally set up to run behind a firewall and when git attempts to send a POST request using webhook on committing changes to the repository, this request never reaches the Jenkins application as the firewall blocks this request as it is sent over an unsecure protocol. Subsequently Jenkins never gets notified upon changes committed to the repository.
@@ -454,3 +452,50 @@ docker run -d -p 80:5000 --name container_name image_tag
 ```
 
 This command constructs the docker container with all the contents inside of the docker image. The options -d suggests docker to execute this command in a detached mode in the background, -p creates a port forwarding connection between the host machine and the docker container. Any requests sent to port 80 of the host machine will be forwarded to the port 5000 of the container, --name is used to give a name to the newly created container.
+
+## ADDITIONAL JENKINS CONFIGUARTION
+
+From Jenkins dashboard navigate to Manage Jenkins -> Manage Credentials -> Click on Jenkins Credentials Provider -> Click on Global credentials (unrestricted) -> Select Add Credentials on the menu on the left.
+
+For Kind, select "Secret text", Scope - Global, Paste AWS_access_id in the secret text box, name it AWS_ACCESS_KEY in the ID field -> Click OK.
+
+Click on Add Credentials again, select the same options as in the previous step except for the secret text box, and ID. Paste the AWS_secret_key in the secret text box here and name it as AWS_SECRET_KEY in the ID field -> Click OK
+
+Click on Add Credentials again, select "SSH Username with private Key", here, name it as "SSH_AUTH" in the ID field, give the username as Ubuntu, check the box below Private Key to Enter directly. Open AWS console in a new tab, log in as the root user with username and password. Navigate into EC2, select Key pairs in the EC2 dashboard resources menu, click on Create key pair give it a name, the file format for Mac and Linux users should be .pem and Windows users have to use .ppk. Click on create key and the private should be automatically downloaded. Copy the file and paste it in the ~/.ssh folder. Now open that pem file using a text editor and copy all of its contents and paste it into the Private Key field in Jenkins.
+Click OK.
+
+Now navigate manage plugins page and install the NodeJS plugin, then navigate to Dashboard -> Global Tool Configuration, jump to NodeJS section, click Add NodeJS, give it a name, Node-15.11, check the Install automatically option, click add installer, choose the version NodeJS 15.11.0, under Global npm packages to install field, type - "yarn@1.22.10", Global npm packages refresh hours - 72.
+
+Scroll below to the Terraform section, click Add Terraform, name it, "Terraform", check the Install automatically option, choose Install from bintray.com, select the version "Terraform 0.14.8 darwin (amd64)", scroll to the bottom and click Save.
+
+Now Jenkins can access the NodeJS and Terraform CLI tools in its build environment.
+
+## JENKINSFILE
+
+In the Jenkinsfile inside the environment block define the variables, AWS_ACCESS_KEY and AWS_SECRET_KEY and grab them using the credentials method by passing their ID's. Define a variable IP as an empty string. Define a variable ECR with the ECR path only without the "/project" part at the end.
+
+Next import the global tools NodeJS and Terraform in the tools block as nodejs and terraform using the names given to them during configuration.
+
+Note: In Jenkins when passing any secret credentials inside a shell command always enclose that shell command in single quotes, '' and only use $CREDENTIALENVIRONMENTNAME as interpolation does not work inside single quotes and only works inside double quotes. Jenkins documentation directs that credentials can end up being leaked if they are interpolated.
+
+The terraform apply command returns the public IP address of the EC2 instance as the output which is grabbed, cleaned up inside the script block using groovy script, and stored inside the environment variable IP.
+
+In the DEPLOY stage, Jenkins runs docker commands to create the docker image and pushes it to the remote ECR repository.
+
+Note: Docker has to be up and running as Jenkins using the docker client running in the local machine to create the docker image and to push it into ECR repository.
+
+Note: In th above stage, if Jenkins fails with this error, "docker: command not found". Find the file "homebrew.mxcl.jenkins-lts.plist" which is a jenkins configuration file and add this before the closing tag "</plist>"
+
+```XML
+<key>EnvironmentVariables</key>
+<dict>
+  <key>PATH</key>
+  <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+</dict>
+```
+
+It adds the docker cli path to the Jenkins environment variables.
+
+If Jenkins is downloaded with Homebrew, "homebrew.mxcl.jenkins-lts.plist" is loacted at the path, /usr/local/Cellar/jenkins-lts/2.176.3/homebrew.mxcl.jenkins-lts.plist.
+
+In the RELEASE stage, Jenkins SSH's into the EC2 instance using the SSH_AUTH private key from the credentials, performs cleanup steps to remove all docker containers and images that previously existed. Then it authenticates the remote docker client with the ECR repository and upon successfully logging in it pulls the image from ECR and runs it to construct the container where the application is served by node server.
