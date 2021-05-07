@@ -91,6 +91,48 @@ git pull
 
 Now since the upstream has been set simple, git pull and git push commands would pull from and push to the remote repository.
 
+### .gitignore
+
+The .gitignore is used to obscure certain files from being tracked and pushed into the remote repository
+
+The final-project/.gitignore file should consist of the following for this project
+
+terraform.tfvars
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+rough.txt
+node_modules
+package-lock.json
+.env
+
+The final-project/client/.gitignore should consist of the following
+
+\# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+\# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+\# testing
+/coverage
+
+\# production
+/build
+
+\# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log\*
+
 ## JENKINS
 
 Jenkins is a JAVA based software tool that can be used to create and automate a CI/CD pipeline job
@@ -453,6 +495,26 @@ docker run -d -p 80:5000 --name container_name image_tag
 
 This command constructs the docker container with all the contents inside of the docker image. The options -d suggests docker to execute this command in a detached mode in the background, -p creates a port forwarding connection between the host machine and the docker container. Any requests sent to port 80 of the host machine will be forwarded to the port 5000 of the container, --name is used to give a name to the newly created container.
 
+### .dockerignore
+
+The .dockerignore file consists of all the files that are not supposed to be ignored by docker during the docker build as it builds a docker image.
+
+For this project its contents are
+
+Dockerfile
+terraform.tfvars
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+rough.txt
+node_modules
+main.tf
+Jenkinsfile
+client/node_modules
+client/package-lock.json
+package-lock.json
+
 ## ADDITIONAL JENKINS CONFIGUARTION
 
 From Jenkins dashboard navigate to Manage Jenkins -> Manage Credentials -> Click on Jenkins Credentials Provider -> Click on Global credentials (unrestricted) -> Select Add Credentials on the menu on the left.
@@ -499,3 +561,104 @@ It adds the docker cli path to the Jenkins environment variables.
 If Jenkins is downloaded with Homebrew, "homebrew.mxcl.jenkins-lts.plist" is loacted at the path, /usr/local/Cellar/jenkins-lts/2.176.3/homebrew.mxcl.jenkins-lts.plist.
 
 In the RELEASE stage, Jenkins SSH's into the EC2 instance using the SSH_AUTH private key from the credentials, performs cleanup steps to remove all docker containers and images that previously existed. Then it authenticates the remote docker client with the ECR repository and upon successfully logging in it pulls the image from ECR and runs it to construct the container where the application is served by node server.
+
+## NODE EXPRESS SERVER
+
+### INSTALL NODE
+
+Follow the instructions here https://nodesource.com/blog/installing-nodejs-tutorial-mac-os-x/ to install node.
+
+### CREATING SERVER
+
+Create a new file in the root directory of the project and name it server.js.
+
+Install the required dependencies as follows:
+
+```shell
+npm init
+```
+
+This command starts an interactive key-value interaction in the terminal, enter the values as required, or just hit "enter" and leave it blank. At the end this command creates a package.json file which consists of all the dependencies of the server.js
+
+```shell
+npm install express --save
+npm install cors --save
+npm install express --save
+npm install nodemon --save
+```
+
+The above commands install the required packages for the server.js file.
+
+This is an express server that listens on PORT 5000 and upon a GET request to with any URL it responds with the index.html from the build file of the React front-end application in the production environment it uses CORS to enable cross domain API calls.
+
+## REACT APPLICATION WITH CLIENT SIDE ROUTING
+
+Create a new folder in the root directory and name it "Client". Navigate into this folder and open terminal in this path and run the following command
+
+```shell
+npx create-react-app app_name
+```
+
+This command creates a react boiler plate and installs all the required latest dependencies and packages. Open the package.json file inside the client folder and add the following as the last key-value pair
+
+```JSON
+"proxy": "http://localhost:5000"
+```
+
+This lets the react app to communicate with the server running on PORT 5000 if there are any database operations that are to be performed by the server, in that case, the react app can communicate with it to retrieve data.
+
+These are the contents of the project directory at the end.
+
+```shell
+final-project
+├── Dockerfile
+├── Jenkinsfile
+├── README.md
+├── client
+│   ├── README.md
+│   ├── package.json
+│   ├── public
+│   │   ├── favicon.ico
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.js
+│   │   ├── App.test.js
+│   │   ├── components
+│   │   │   ├── choropleth_map
+│   │   │   │   ├── Choropleth.css
+│   │   │   │   ├── ChoroplethFC.js
+│   │   │   │   ├── CountyBorder.js
+│   │   │   │   ├── PlotMap.js
+│   │   │   │   ├── useData.js
+│   │   │   │   └── useMapData.js
+│   │   │   ├── navbar
+│   │   │   │   ├── Dropdown.css
+│   │   │   │   ├── Dropdown.js
+│   │   │   │   ├── MenuItems.js
+│   │   │   │   ├── NavBar.js
+│   │   │   │   ├── NavData.js
+│   │   │   │   ├── Navbar.css
+│   │   │   │   └── rough.txt
+│   │   │   └── pages
+│   │   │       ├── About.js
+│   │   │       ├── Home.js
+│   │   │       ├── Resources.js
+│   │   │       └── home.css
+│   │   ├── index.js
+│   │   ├── logo.svg
+│   │   ├── reportWebVitals.js
+│   │   └── setupTests.js
+│   └── yarn.lock
+├── main.tf
+├── package.json
+├── server.js
+└── terraform.tfvars
+
+7 directories, 40 files
+
+```
