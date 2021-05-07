@@ -12,37 +12,37 @@ After cloning the remote repository in the local workspace, the job finds the Je
 
 ### STAGES IN A TYPICAL CI/CD PIPELINE
 
-Each of the following stages run sequentially one after the other depending on the order in the Jenkinsfile and if one of the steps inside a stage fail then the following steps and stages are skipped and the job ends in a FAILURE.
+Each of the following stages run sequentially one after the other depending on the order in the Jenkinsfile and if one of the steps inside a stage fail, then the following steps and stages are skipped and the job ends in a FAILURE.
 
-The first stage in a CI/CD pipeline would be to checkout souce control management and clone the latest code into the local workspace, upon success it moves to the next stage.
+The first stage in a CI/CD pipeline would be to checkout source control management and clone the latest code into the local workspace, upon success it moves to the next stage.
 
 The send stage is to create a production build by installing all the dependencies of the application.
 
 Then follows the testing stage, where all the test scripts are executed.
 
-Then follows the release stage, where the necessary infrastucture is provisioned using IaaC tools like Terraform, AWS Cloudformation, etc,.
+Then follows the release stage, where the necessary infrastucture is provisioned using Infrastructure as a Code(IaaC) tools like Terraform, AWS Cloudformation, etc,.
 
 Then follows the deployment stage, where a docker image of the application is created using a docker client and this docker image is pushed to a remote docker repository like dockerhub or AWS ECR, etc and then that is image is pulled on the remote application host machine and upon running the image it creates an application container which serves the application.
 
 ## REQUIRED TOOLS
 
-VSCODE(EDITOR)
+1. VSCODE(EDITOR)
 
-GIT
+2. GIT
 
-JENKINS
+3. JENKINS
 
-SOCKETXP
+4. SOCKETXP
 
-AWS
+5. AWS
 
-AWS CLI TOOLS
+6. AWS CLI TOOLS
 
-AWS ELASTIC CONTAINER REGISTRY
+7. AWS ELASTIC CONTAINER REGISTRY
 
-TERRAFORM
+8. TERRAFORM
 
-DOCKER DESKTOP
+9. DOCKER DESKTOP
 
 ## VSCODE
 
